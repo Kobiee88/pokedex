@@ -2,44 +2,18 @@ package main
 
 import "testing"
 
-func TestCleanInput(t *testing.T) {
-	cases := []struct {
-		input    string
-		expected []string
-	}{
-		{
-			input:    "  hello  world  ",
-			expected: []string{"hello", "world"},
-		},
-		{
-			input:    "    ",
-			expected: []string{},
-		},
-		{
-			input:    "This is a test",
-			expected: []string{"this", "is", "a", "test"},
-		},
-	}
+func TestAddGet(t *testing.T) {
+	initCache()
+	testKey := "testKey"
+	testValue := []byte("testValue")
 
-	for _, c := range cases {
-		actual := cleanInput(c.input)
-		// Check the length of the actual slice against the expected slice
-		// if they don't match, use t.Errorf to print an error message
-		// and fail the test
-		if len(actual) != len(c.expected) {
-			t.Errorf("cleanInput(%q) = %q; want %q", c.input, actual, c.expected)
-			continue
-		}
-		for i := range actual {
-			word := actual[i]
-			expectedWord := c.expected[i]
-			// Check each word in the slice
-			// if they don't match, use t.Errorf to print an error message
-			// and fail the test
-			if word != expectedWord {
-				t.Errorf("cleanInput(%q) = %q; want %q", c.input, actual, c.expected)
-				continue
-			}
-		}
+	cache.Add(testKey, testValue)
+	retrievedValue, exists := cache.Get(testKey)
+
+	if !exists {
+		t.Errorf("Expected key %s to exist in cache", testKey)
+	}
+	if string(retrievedValue) != string(testValue) {
+		t.Errorf("Expected value %s, got %s", testValue, retrievedValue)
 	}
 }

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
-	"strings"
 	"bufio"
+	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -13,7 +13,7 @@ func main() {
 	initCommandList()
 	initCache()
 	//createApiCall(0)
-	for true {
+	for {
 		fmt.Print("Pokedex > ")
 		text, _ := reader.ReadString('\n')
 
@@ -23,16 +23,20 @@ func main() {
 		}
 
 		commandName := words[0]
+		argument := ""
+		if len(words) > 1 {
+			argument = strings.Join(words[1:], " ")
+		}
 
-		handleCommand(commandName)
+		//TODO: pass the rest of the words as arguments to the command
+		handleCommand(commandName, argument)
 
 		//fmt.Printf("Your command was: %s\n", commandName)
 	}
 }
 
 func cleanInput(text string) []string {
-	var words []string
-	words = strings.Fields(strings.ToLower(text))
+	//var words []string
+	words := strings.Fields(strings.ToLower(text))
 	return words
 }
-	

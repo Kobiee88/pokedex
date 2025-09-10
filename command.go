@@ -8,29 +8,29 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(string) error
 }
 
 var commands = map[string]cliCommand{}
 
 var currentOffset = 0
 
-func handleCommand(commandName string) error {
+func handleCommand(commandName string, name string) error {
 	if cmd, exists := commands[commandName]; exists {
-		return cmd.callback()
+		return cmd.callback(name)
 	} else {
 		fmt.Println("Unknown command")
 		return fmt.Errorf("Unknown command: %s", commandName)
 	}
 }
 
-func commandExit() error {
+func commandExit(name string) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp() error {
+func commandHelp(name string) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")
 	fmt.Println("")
@@ -40,19 +40,25 @@ func commandHelp() error {
 	return nil
 }
 
-func commandMap() error {
+func commandMap(name string) error {
 	createApiCall(currentOffset)
 	currentOffset += 20
 	return nil
 }
 
-func commandMapBack() error {
+func commandMapBack(name string) error {
 	if currentOffset <= 20 {
 		fmt.Println("you're on the first page")
 		return nil
 	}
 	createApiCall(currentOffset - 40)
 	currentOffset -= 20
+	return nil
+}
+
+func commandExplore(name string) error {
+	fmt.Printf("Exploring %s...\n", name)
+	printPokemonOfLocationArea(name)
 	return nil
 }
 
@@ -76,5 +82,10 @@ func initCommandList() {
 		name:        "mapb",
 		description: "Show available locations on a map",
 		callback:    commandMapBack,
+	}
+	commands["explore"] = cliCommand{
+		name:        "explore",
+		description: "Explore a location - provide the location name as an argument",
+		callback:    commandExplore,
 	}
 }
